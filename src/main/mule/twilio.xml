@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:twilio="http://www.mulesoft.org/schema/mule/twilio"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/twilio http://www.mulesoft.org/schema/mule/twilio/current/mule-twilio.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<twilio:config name="Twilio_Connector_Config" doc:name="Twilio Connector Config" doc:id="cbd1c18f-4923-4e04-8682-17337b6ab7e6" >
+		<twilio:account-sid-auth-token-connection username="ACd0786f3611aa815887c63b9f73caa0be" password="8cc415731a882555b121599081462221" />
+	</twilio:config>
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c6453d13-dca5-480d-9f62-9dbff431517e" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="twilioFlow" doc:id="e0160966-ae77-4c7f-8b88-7cd5b73404fc" >
+		<http:listener doc:name="Listener" doc:id="727fd07d-47d8-47e9-8fb7-426529c7e18c" config-ref="HTTP_Listener_config" path="/twilio"/>
+		<ee:transform doc:name="Transform Message" doc:id="e2f72c4c-2813-4429-bcc7-efb416fd6db2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/x-www-form-urlencoded
+---
+{
+	From: "+12315257586",
+	To: "+919398399728",
+	Body: "twilio"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<twilio:create20100401-accounts-messagesjson-by-account-sid doc:name="Create Message" doc:id="f6b0629e-f14f-4c8e-b07b-0abb3451328f" config-ref="Twilio_Connector_Config" accountSid="ACd0786f3611aa815887c63b9f73caa0be"/>
+		<logger level="INFO" doc:name="Logger" doc:id="b6b7a0ff-ad62-4326-b775-a208ef71eb0b" message="#[payload]"/>
+	</flow>
+</mule>
